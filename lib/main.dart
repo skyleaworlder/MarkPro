@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:loggy/loggy.dart';
 import 'package:mark_pro/pages/Login.dart';
+import 'package:mark_pro/pages/Register.dart';
 
 void main() {
   Loggy.initLoggy(
@@ -24,6 +25,11 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: const MyHomePage(title: "MarkPro"),
+      initialRoute: "login",
+      routes: {
+        "login": (context) => const LoginPage(),
+        "register": (context) => const RegisterPage(),
+      },
     );
   }
 }
@@ -40,6 +46,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return LoginPage(title: widget.title);
+    return const LoginPage();
   }
 }
