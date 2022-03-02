@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:loggy/loggy.dart';
+import 'package:mark_pro/api/User.dart';
 
 class LoginPage extends StatefulWidget {
   final String title;
@@ -82,9 +83,11 @@ class _LoginPageState extends State<LoginPage> with UiLoggy {
                       height: 30,
                       child: ElevatedButton(
                         child: const Text("登录"),
-                        onPressed: () {
+                        onPressed: () async {
                           loggy.debug("login username: " + this.username.text);
                           loggy.debug("login password: " + this.password.text);
+                          var resp = await login({"username": username.text, "password": password.text});
+                          loggy.info(resp);
                         },
                       ),
                     ),
