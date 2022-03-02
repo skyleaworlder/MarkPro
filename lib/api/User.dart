@@ -9,3 +9,12 @@ Future<Response?> login(Map<String, dynamic> data) async {
   }
   return resp;
 }
+
+
+Future<Response?> register(Map<String, dynamic> data) async {
+  var resp = await request("/register", "POST", body: data);
+  if (resp == null) {
+    logError("api.User.dart: register: response is null!");
+  }
+  return resp;
+}
