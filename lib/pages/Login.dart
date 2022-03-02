@@ -1,13 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:loggy/loggy.dart';
 import 'package:mark_pro/api/User.dart';
 
 class LoginPage extends StatefulWidget {
-  final String title;
-
   const LoginPage({
     Key? key,
-    required this.title,
   }) : super(key: key);
 
   @override
@@ -56,26 +55,22 @@ class _LoginPageState extends State<LoginPage> with UiLoggy {
                       ),
                     ),
                     TextField(
+                      controller: username,
                       autofocus: true,
                       decoration: const InputDecoration(
                         prefixIcon: Icon(Icons.person),
                         labelText: "用户名",
                         hintText: "请输入密码",
                       ),
-                      onChanged: (username) {
-                        this.username.text = username;
-                      },
                     ),
                     TextField(
+                      controller: password,
                       obscureText: true,
                       decoration: const InputDecoration(
                         prefixIcon: Icon(Icons.lock),
                         labelText: "密码",
                         hintText: "请输入密码",
                       ),
-                      onChanged: (password) {
-                        this.password.text = password;
-                      }
                     ),
                     const SizedBox(height: 10,),
                     SizedBox(
@@ -84,10 +79,13 @@ class _LoginPageState extends State<LoginPage> with UiLoggy {
                       child: ElevatedButton(
                         child: const Text("登录"),
                         onPressed: () async {
-                          loggy.debug("login username: " + this.username.text);
-                          loggy.debug("login password: " + this.password.text);
+                          loggy.debug("login username: " + username.text);
+                          loggy.debug("login password: " + password.text);
                           var resp = await login({"username": username.text, "password": password.text});
-                          loggy.info(resp);
+                          if (resp == null || resp.statusCode != 200) {
+                            return;
+                          }
+                          loggy.info(resp.data["status"]);
                         },
                       ),
                     ),
@@ -111,6 +109,7 @@ class _LoginPageState extends State<LoginPage> with UiLoggy {
                       },
                       onPressed: () {
                         loggy.debug("goto register page");
+                        Navigator.pushNamed(context, "register");
                       },
                     ),
                   ],
