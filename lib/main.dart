@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:loggy/loggy.dart';
+import 'package:mark_pro/pages/Login.dart';
 
 void main() {
+  Loggy.initLoggy(
+    logOptions: const LogOptions(
+      LogLevel.all,
+      stackTraceLevel: LogLevel.error,
+    )
+  );
   runApp(const MyApp());
 }
 
@@ -15,7 +23,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'MarkPro'),
+      home: const MyHomePage(title: "MarkPro"),
     );
   }
 }
@@ -32,23 +40,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-       title: Center(
-         child: Text(widget.title),
-       ),
-      ),
-      body: Center(
-        child: Image.asset(
-          "assets/sakura.jpg",
-          // 图片占据全屏
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-          color: Colors.white.withOpacity(0.6),
-          colorBlendMode: BlendMode.modulate,
-          fit: BoxFit.cover,
-        )
-      ),
-    );
+    return LoginPage(title: widget.title);
   }
 }
