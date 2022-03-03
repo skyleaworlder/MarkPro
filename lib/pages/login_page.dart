@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:loggy/loggy.dart';
 import 'package:mark_pro/api/user.dart';
+import 'package:mark_pro/global.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({
@@ -86,6 +88,12 @@ class _LoginPageState extends State<LoginPage> with UiLoggy {
                             return;
                           }
                           loggy.info(resp.data["status"]);
+                          g.username = username.text;
+                          g.token = resp.data["token"];
+
+                          SharedPreferences sp = await SharedPreferences.getInstance();
+                          await sp.setString("token", g.token);
+
                           Navigator.pushReplacementNamed(context, "main");
                         },
                       ),

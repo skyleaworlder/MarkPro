@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:loggy/loggy.dart';
+import 'package:mark_pro/global.dart';
 import 'package:mark_pro/pages/login_page.dart';
 import 'package:mark_pro/pages/register_page.dart';
 import 'package:mark_pro/pages/main_page.dart';
@@ -27,7 +30,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const LoginPage(),
+      home: const InitApp(),
       initialRoute: "login",
       routes: {
         "login": (context) => const LoginPage(),
@@ -40,14 +43,14 @@ class MyApp extends StatelessWidget {
 
 
 class InitApp extends StatefulWidget {
-  const InitApp({ Key? key }) : super(key: key);
+  const InitApp({Key? key}) : super(key: key);
 
   @override
   _InitAppState createState() => _InitAppState();
 }
 
 class _InitAppState extends State<InitApp> with UiLoggy {
-  late bool isLogin;
+  bool isLogin = false;
 
   @override
   void initState() {
@@ -57,7 +60,7 @@ class _InitAppState extends State<InitApp> with UiLoggy {
 
   @override
   Widget build(BuildContext context) {
-    return isLogin ? const LoginPage() : const MainPage();
+    return isLogin ? const MainPage(): const LoginPage();
   }
 
   void _checkToken() async {
@@ -70,6 +73,10 @@ class _InitAppState extends State<InitApp> with UiLoggy {
       });
       return;
     }
+    loggy.info("main.dart: InitApp: token reused");
+    Map<String, dynamic> jwt = JwtDecoder.decode(token);
+    g.username = jwt["username"].toString();
+    g.token = token;
     setState(() {
       isLogin = true;
     });
