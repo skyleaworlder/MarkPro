@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:loggy/loggy.dart';
 
-const String baseURL = "http://127.0.0.1:5000";
+const String baseURL = "http://10.0.2.2:5000";
 
 Future<Response?> request(
   String path, String method, {
