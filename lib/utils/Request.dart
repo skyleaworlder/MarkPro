@@ -32,7 +32,7 @@ Future<Response?> request(
     }
   } on DioError catch (e) {
     // 处理 DioError
-    logError("error: " + e.error);
+    logError(e.error);
     logError("request.path: " + path);
     logError("request.method: " + method);
     logError("request.param: " + param.toString());
