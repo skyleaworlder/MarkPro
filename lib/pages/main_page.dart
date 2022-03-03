@@ -1,9 +1,12 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:charts_flutter/flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:loggy/loggy.dart';
 import 'package:mark_pro/api/log.dart';
 import 'package:mark_pro/components/layout.dart';
+import 'package:mark_pro/global.dart';
 import 'package:mark_pro/utils/colors.dart';
 
 class MainPage extends StatefulWidget {
@@ -13,34 +16,27 @@ class MainPage extends StatefulWidget {
   _MainPageState createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage> {
+class _MainPageState extends State<MainPage> with UiLoggy {
+  static List<String> simpleTodoRespKeys = [
+    "today_done", "todo_1d", "todo_3d", "todo_7d"
+  ];
+  List<PieSimpleInfoItem> pieSimpleInfo = [];
+  List<Series<PieSimpleInfoItem, int>> seriesList = [];
+  bool isIniting = true;
+
   @override
   void initState() {
     super.initState();
+    initPieInfo();
   }
 
   @override
   Widget build(BuildContext context) {
-    var random = Random();
-    var data = <PieSales>[];
-    for (var i = 0; i < 6; i++) {
-      data.add(PieSales(
-        i, random.nextInt(100),
-        ColorUtil.fromDartColor(ColorWrap.get(i))
-      ));
-    }
-
-    var seriesList = [
-      Series<PieSales, int>(
-        id: 'Sales',
-        domainFn: (PieSales sales, _) => sales.year,
-        measureFn: (PieSales sales, _) => sales.sales,
-        colorFn: (PieSales sales, _) => sales.color,
-        data: data,
-        labelAccessorFn: (PieSales row, _) => '${row.year}: ${row.sales}',
-      )
-    ];
-    return Layout(
+    return isIniting
+    ? const Center(
+      child: CircularProgressIndicator()
+    )
+    : Layout(
       title: "MarkPro",
       child: Container(
         color: Colors.white,
@@ -54,11 +50,45 @@ class _MainPageState extends State<MainPage> {
       ),
     );
   }
+
+  void initPieInfo() async {
+    var resp = await simpleTodo({"username": g.username, "token": g.token});
+    if (resp == null || resp.statusCode != 200) {
+      // TODO: 主界面初始化失败应该有所作为
+      return;
+    }
+    loggy.info("main_page.dart: initPieInfo: response.data: " + resp.data.toString());
+    for (var i = 0; i < simpleTodoRespKeys.length; i++) {
+      pieSimpleInfo.add(PieSimpleInfoItem(
+        simpleTodoRespKeys[i],
+        resp.data[simpleTodoRespKeys[i]],
+        ColorUtil.fromDartColor(ColorWrap.get(i)),
+      ));
+    }
+    loggy.info("main_page.dart: initPieInfo: pieSimpleInfo: " + pieSimpleInfo.toString());
+    // 初始化 series list
+    seriesList.add(
+      Series<PieSimpleInfoItem, int>(
+        id: 'Sales',
+        keyFn: (PieSimpleInfoItem i, _) => i.key,
+        domainFn: (PieSimpleInfoItem i, _) => i.num,
+        measureFn: (PieSimpleInfoItem i, _) => i.num,
+        colorFn: (PieSimpleInfoItem i, _) => i.color,
+        data: pieSimpleInfo,
+        labelAccessorFn: (PieSimpleInfoItem i, _) => i.key,
+      )
+    );
+    setState(() {
+      isIniting = false;
+    });
+    return;
+  }
 }
 
-class PieSales {
-  final int year;
-  final int sales;
+
+class PieSimpleInfoItem {
+  final String key;
+  final int num;
   final Color color;
-  PieSales(this.year, this.sales, this.color);
+  PieSimpleInfoItem(this.key, this.num, this.color);
 }
