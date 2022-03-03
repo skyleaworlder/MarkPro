@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:loggy/loggy.dart';
-import 'package:mark_pro/api/User.dart';
+import 'package:mark_pro/api/user.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:loggy/loggy.dart';
-import 'package:mark_pro/api/User.dart';
+import 'package:mark_pro/api/user.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({ Key? key }) : super(key: key);
@@ -158,7 +158,7 @@ class _RegisterPageState extends State<RegisterPage> with UiLoggy {
                               loggy.debug("goto login page(click 'have an account')");
                               Navigator.pop(context);
                             },
-                          )
+                          ),
                         ],
                       ),
                     ),
