@@ -86,6 +86,7 @@ class _LoginPageState extends State<LoginPage> with UiLoggy {
                             return;
                           }
                           loggy.info(resp.data["status"]);
+                          Navigator.pushReplacementNamed(context, "main");
                         },
                       ),
                     ),
