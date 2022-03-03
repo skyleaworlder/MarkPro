@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:loggy/loggy.dart';
-import 'package:mark_pro/pages/Login.dart';
-import 'package:mark_pro/pages/Register.dart';
+import 'package:mark_pro/pages/login_page.dart';
+import 'package:mark_pro/pages/register_page.dart';
+import 'package:mark_pro/pages/main_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   Loggy.initLoggy(
@@ -13,10 +16,10 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
+class MyApp extends StatelessWidget {
+  const MyApp({ Key? key }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -24,28 +27,51 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: "MarkPro"),
+      home: const LoginPage(),
       initialRoute: "login",
       routes: {
         "login": (context) => const LoginPage(),
         "register": (context) => const RegisterPage(),
+        "main": (context) => const MainPage(),
       },
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
 
-  final String title;
+class InitApp extends StatefulWidget {
+  const InitApp({ Key? key }) : super(key: key);
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  _InitAppState createState() => _InitAppState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _InitAppState extends State<InitApp> with UiLoggy {
+  late bool isLogin;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkToken();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const LoginPage();
+    return isLogin ? const LoginPage() : const MainPage();
+  }
+
+  void _checkToken() async {
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    String? token = sp.getString("token");
+    if (token == null || JwtDecoder.isExpired(token)) {
+      loggy.info("main.dart: InitApp: token expired");
+      setState(() {
+        isLogin = false;
+      });
+      return;
+    }
+    setState(() {
+      isLogin = true;
+    });
   }
 }
